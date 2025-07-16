@@ -87,6 +87,35 @@ describe('payment tests', () => {
   
 });
 
+describe('seat reservation tests', () => {
+
+  test('one seat is reserved for each adult and child ticket', () => {  
+    ticketService.purchaseTickets(123, ...TicketServiceData.oneAdult);
+    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 1);
+    ticketService.purchaseTickets(123, ...TicketServiceData.oneAdultOneChild);
+    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 2);
+    ticketService.purchaseTickets(123, ...TicketServiceData.maxAdultOneChild);
+    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 25);
+    ticketService.purchaseTickets(123, ...TicketServiceData.oneAdultMaxChild);
+    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 1);
+    ticketService.purchaseTickets(123, ...TicketServiceData.twelveAdultThirteenChild);
+    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 25);
+  });  
+
+  test('seats are not reserved for infants', () => {
+    ticketService.purchaseTickets(123, ...TicketServiceData.oneAdultOneInfant);
+    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 1);
+    ticketService.purchaseTickets(123, ...TicketServiceData.maxAdultOneInfant);
+    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 1);
+    ticketService.purchaseTickets(123, ...TicketServiceData.thirteenAdultTwelveInfants);
+    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 1);
+    ticketService.purchaseTickets(123, ...TicketServiceData.twelveAdultTwelveInfants);
+    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 1);
+  }); 
+
+});
+
+
 
 
 
