@@ -8,8 +8,7 @@ let generateTicketRequests = (ticketOrders) => {
     return ticketTypeRequests
 }
 
-export default {
-    
+export default {    
     negativeOneAdults: generateTicketRequests([{type: 'ADULT', quantity: -1}]),
     zeroAdults: generateTicketRequests([{type: 'ADULT', quantity: 0}]),
     oneAdult: generateTicketRequests([{type: 'ADULT', quantity: 1}]),
@@ -22,10 +21,13 @@ export default {
     oneAdultOneChild: generateTicketRequests([{type: 'ADULT', quantity: 1}, {type: 'CHILD', quantity: 1}]),
     maxAdultOneChild: generateTicketRequests([{type: 'ADULT', quantity: 24}, {type: 'CHILD', quantity: 1}]),
     oneAdultMaxChild: generateTicketRequests([{type: 'ADULT', quantity: 1}, {type: 'CHILD', quantity: 24}]),
+    twelveAdultThirteenChild: generateTicketRequests([{type: 'ADULT', quantity: 12}, {type: 'CHILD', quantity: 13}]),
 
     oneInfant: generateTicketRequests([{type: 'INFANT', quantity: 1}]),
     oneAdultOneInfant: generateTicketRequests([{type: 'ADULT', quantity: 1}, {type: 'INFANT', quantity: 1}]),
     oneAdultTwoInfants: generateTicketRequests([{type: 'ADULT', quantity: 1}, {type: 'INFANT', quantity: 2}]),
     twoAdultOneInfant: generateTicketRequests([{type: 'ADULT', quantity: 2}, {type: 'INFANT', quantity: 1}]),
-
+    maxAdultOneInfant: generateTicketRequests([{type: 'ADULT', quantity: 24}, {type: 'INFANT', quantity: 1}]),
+    thirteenAdultTwelveInfants : generateTicketRequests([{type: 'ADULT', quantity: 13}, {type: 'INFANT', quantity: 12}]),
+    twelveAdultThirteenInfants : generateTicketRequests([{type: 'ADULT', quantity: 12}, {type: 'INFANT', quantity: 12}]),
 };

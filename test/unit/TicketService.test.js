@@ -12,7 +12,9 @@ let reserveSeatsSpy;
 
 
 beforeEach(() => {
-  ticketService = new TicketService();
+  const ticketPaymentService = new TicketPaymentService();
+  const seatReservationService = new SeatReservationService();
+  ticketService = new TicketService(ticketPaymentService, seatReservationService);
   makePaymentSpy = jest.spyOn(TicketPaymentService.prototype, 'makePayment');
   reserveSeatsSpy = jest.spyOn(SeatReservationService.prototype, 'reserveSeat');
 });
@@ -56,6 +58,34 @@ describe('request validation tests', () => {
     expect(() => {ticketService.purchaseTickets(1, ...TicketServiceData.oneAdultTwoInfants)}).toThrow(InvalidPurchaseException);
   });
 
+});
+
+describe('payment tests', () => {
+
+  test('charges correct sum for adult and child tickets', () => {
+    ticketService.purchaseTickets(123, ...TicketServiceData.oneAdult);
+    expect(makePaymentSpy).toHaveBeenCalledWith(123, 25);
+    ticketService.purchaseTickets(123, ...TicketServiceData.oneAdultOneChild);
+    expect(makePaymentSpy).toHaveBeenCalledWith(123, 40);
+    ticketService.purchaseTickets(123, ...TicketServiceData.oneAdultMaxChild);
+    expect(makePaymentSpy).toHaveBeenCalledWith(123, 400);
+    ticketService.purchaseTickets(123, ...TicketServiceData.twelveAdultThirteenChild);
+    expect(makePaymentSpy).toHaveBeenCalledWith(123, 675);
+    ticketService.purchaseTickets(123, ...TicketServiceData.maxAdultOneChild);
+    expect(makePaymentSpy).toHaveBeenCalledWith(123, 615);
+  });  
+
+  test('does not charge for infant tickets', () => {
+    ticketService.purchaseTickets(123, ...TicketServiceData.oneAdultOneInfant);
+    expect(makePaymentSpy).toHaveBeenCalledWith(123, 25);
+    ticketService.purchaseTickets(123, ...TicketServiceData.maxAdultOneInfant);
+    expect(makePaymentSpy).toHaveBeenCalledWith(123, 600);
+    ticketService.purchaseTickets(123, ...TicketServiceData.thirteenAdultTwelveInfants);
+    expect(makePaymentSpy).toHaveBeenCalledWith(123, 520);
+    ticketService.purchaseTickets(123, ...TicketServiceData.twelveAdultTwelveInfants);
+    expect(makePaymentSpy).toHaveBeenCalledWith(123, 480);
+  });  
+  
 });
 
 
