@@ -18,6 +18,7 @@ export default class TicketTypeRequest {
 
     this.#type = type;
     this.#noOfTickets = noOfTickets;
+    Object.seal(this)
   }
 
   getNoOfTickets() {
