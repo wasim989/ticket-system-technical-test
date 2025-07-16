@@ -10,11 +10,10 @@ let ticketService;
 let makePaymentSpy;
 let reserveSeatsSpy;
 
-
 beforeEach(() => {
   const ticketPaymentService = new TicketPaymentService();
   const seatReservationService = new SeatReservationService();
-  ticketService = new TicketService(ticketPaymentService, seatReservationService);
+  ticketService = new TicketService(ticketPaymentService, seatReservationService, {adult: 25, child: 15});
   makePaymentSpy = jest.spyOn(TicketPaymentService.prototype, 'makePayment');
   reserveSeatsSpy = jest.spyOn(SeatReservationService.prototype, 'reserveSeat');
 });
@@ -60,30 +59,30 @@ describe('request validation tests', () => {
 
 });
 
-describe('payment tests', () => {
+describe('payment tests', () => {  
 
   test('charges correct sum for adult and child tickets', () => {
     ticketService.purchaseTickets(123, ...TicketServiceData.oneAdult);
-    expect(makePaymentSpy).toHaveBeenCalledWith(123, 25);
+    expect(makePaymentSpy).toHaveBeenLastCalledWith(123, 25);
     ticketService.purchaseTickets(123, ...TicketServiceData.oneAdultOneChild);
-    expect(makePaymentSpy).toHaveBeenCalledWith(123, 40);
+    expect(makePaymentSpy).toHaveBeenLastCalledWith(123, 40);
     ticketService.purchaseTickets(123, ...TicketServiceData.oneAdultMaxChild);
-    expect(makePaymentSpy).toHaveBeenCalledWith(123, 400);
+    expect(makePaymentSpy).toHaveBeenLastCalledWith(123, 385);
     ticketService.purchaseTickets(123, ...TicketServiceData.twelveAdultThirteenChild);
-    expect(makePaymentSpy).toHaveBeenCalledWith(123, 675);
+    expect(makePaymentSpy).toHaveBeenLastCalledWith(123, 495);
     ticketService.purchaseTickets(123, ...TicketServiceData.maxAdultOneChild);
-    expect(makePaymentSpy).toHaveBeenCalledWith(123, 615);
+    expect(makePaymentSpy).toHaveBeenLastCalledWith(123, 615);
   });  
 
   test('does not charge for infant tickets', () => {
     ticketService.purchaseTickets(123, ...TicketServiceData.oneAdultOneInfant);
-    expect(makePaymentSpy).toHaveBeenCalledWith(123, 25);
+    expect(makePaymentSpy).toHaveBeenLastCalledWith(123, 25);
     ticketService.purchaseTickets(123, ...TicketServiceData.maxAdultOneInfant);
-    expect(makePaymentSpy).toHaveBeenCalledWith(123, 600);
+    expect(makePaymentSpy).toHaveBeenLastCalledWith(123, 600);
     ticketService.purchaseTickets(123, ...TicketServiceData.thirteenAdultTwelveInfants);
-    expect(makePaymentSpy).toHaveBeenCalledWith(123, 520);
+    expect(makePaymentSpy).toHaveBeenLastCalledWith(123, 325);
     ticketService.purchaseTickets(123, ...TicketServiceData.twelveAdultTwelveInfants);
-    expect(makePaymentSpy).toHaveBeenCalledWith(123, 480);
+    expect(makePaymentSpy).toHaveBeenLastCalledWith(123, 300);
   });  
   
 });

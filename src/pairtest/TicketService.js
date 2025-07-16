@@ -6,10 +6,12 @@ import SeatReservationService from '../thirdparty/seatbooking/SeatReservationSer
 export default class TicketService {
   #ticketPaymentService;
   #seatReservationService;
+  #ticketPrices;
 
-  constructor(ticketPaymentService, seatReservationService){
+  constructor(ticketPaymentService, seatReservationService, ticketPrices){
     this.#ticketPaymentService = ticketPaymentService;
     this.#seatReservationService = seatReservationService;
+    this.#ticketPrices = ticketPrices;
   }
 
   purchaseTickets(accountId, ...ticketTypeRequests) {
@@ -19,6 +21,8 @@ export default class TicketService {
     catch(err){
      throw new InvalidPurchaseException(err.message);
     }
+
+    this.#processPayment(accountId, ticketTypeRequests);
 
   }
 
@@ -77,6 +81,23 @@ export default class TicketService {
   #getTicketCount(ticketType, ticketTypeRequests){
     return ticketTypeRequests.reduce((sum, request)=>{
       return request.getTicketType() === ticketType ?  sum + request.getNoOfTickets() : sum
+    }, 0);
+  }
+
+  #processPayment(accountId, ticketTypeRequests) {
+    amountToPay = this.#calculatePayment(ticketTypeRequests);
+    this.#ticketPaymentService.makePayment(accountId, amountToPay);
+  }
+
+  #calculatePayment(ticketTypeRequests) {
+    return ticketTypeRequests.reduce((total, request) => {
+      if(request.getTicketType() === 'ADULT') {
+        return total + (request.getNoOfTickets() * this.#ticketPrices.adult); 
+      }
+      if(request.getTicketType() === 'CHILD') {
+        return total + (request.getNoOfTickets() * this.#ticketPrices.child); 
+      }
+      return total;
     }, 0);
   }
 

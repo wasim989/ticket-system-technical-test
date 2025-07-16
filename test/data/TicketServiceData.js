@@ -29,5 +29,5 @@ export default {
     twoAdultOneInfant: generateTicketRequests([{type: 'ADULT', quantity: 2}, {type: 'INFANT', quantity: 1}]),
     maxAdultOneInfant: generateTicketRequests([{type: 'ADULT', quantity: 24}, {type: 'INFANT', quantity: 1}]),
     thirteenAdultTwelveInfants : generateTicketRequests([{type: 'ADULT', quantity: 13}, {type: 'INFANT', quantity: 12}]),
-    twelveAdultThirteenInfants : generateTicketRequests([{type: 'ADULT', quantity: 12}, {type: 'INFANT', quantity: 12}]),
+    twelveAdultTwelveInfants : generateTicketRequests([{type: 'ADULT', quantity: 12}, {type: 'INFANT', quantity: 12}]),
 };
