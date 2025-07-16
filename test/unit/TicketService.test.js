@@ -21,11 +21,11 @@ describe('request validation tests', () => {
 
   test('purchaseTickets method should throw InvalidPurchaseException if account Id is not an integer greater than 0', () => {
     expect(() => {ticketService.purchaseTickets('123', ...TicketServiceData.allTypesMaxMinusOneTotalQuantity)}).toThrow(InvalidPurchaseException);
-    expect(() => {ticketService.purchaseTickets(null, ...TicketServiceData.singleAdult)}).toThrow(InvalidPurchaseException);
-    expect(() => {ticketService.purchaseTickets({}, ...TicketServiceData.singleAdult)}).toThrow(InvalidPurchaseException);
-    expect(() => {ticketService.purchaseTickets(0, ...TicketServiceData.singleAdult)}).toThrow(InvalidPurchaseException);
-    expect(() => {ticketService.purchaseTickets(1, ...TicketServiceData.singleAdult)}).not.toThrow(InvalidPurchaseException);
-    expect(() => {ticketService.purchaseTickets(2, ...TicketServiceData.singleAdult)}).not.toThrow(InvalidPurchaseException);
+    expect(() => {ticketService.purchaseTickets(null, ...TicketServiceData.oneAdult)}).toThrow(InvalidPurchaseException);
+    expect(() => {ticketService.purchaseTickets({}, ...TicketServiceData.oneAdult)}).toThrow(InvalidPurchaseException);
+    expect(() => {ticketService.purchaseTickets(0, ...TicketServiceData.oneAdult)}).toThrow(InvalidPurchaseException);
+    expect(() => {ticketService.purchaseTickets(1, ...TicketServiceData.oneAdult)}).not.toThrow(InvalidPurchaseException);
+    expect(() => {ticketService.purchaseTickets(2, ...TicketServiceData.oneAdult)}).not.toThrow(InvalidPurchaseException);
   });
 
 });

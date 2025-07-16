@@ -19,7 +19,7 @@ describe('ticket service end-to-end integration', () => {
     const seatReservationService = new SeatReservationService();
 
     const ticketService = new TicketService(ticketPaymentService, seatReservationService);
-    ticketService.purchaseTickets(123, ...TicketServiceData.allTypesMaxTotalQuantity);
+    ticketService.purchaseTickets(123, ...TicketServiceData.allTypesMaxMinusOneTotalQuantity);
     expect(makePaymentSpy).toHaveBeenCalledWith(123, 345);
     expect(reserveSeatsSpy).toHaveBeenCalledWith(123, 17);
   });
