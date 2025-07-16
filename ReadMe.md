@@ -33,5 +33,17 @@ THEN:
     AND £25 is charged for every adult ticket
     AND £15 is charged for every child ticket
 
+## Setup
 
+### Installation
+
+```
+npm install
+```
+
+### Run Tests
+
+```
+npm test
+```
 
