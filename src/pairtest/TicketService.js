@@ -4,10 +4,6 @@ import TicketPaymentService from '../thirdparty/paymentgateway/TicketPaymentServ
 import SeatReservationService from '../thirdparty/seatbooking/SeatReservationService.js';
 
 export default class TicketService {
-  /**
-   * Should only have private methods other than the one below.
-   */
-
   #ticketPaymentService;
   #seatReservationService;
 
@@ -17,15 +13,71 @@ export default class TicketService {
   }
 
   purchaseTickets(accountId, ...ticketTypeRequests) {
-    // throws InvalidPurchaseException
-
-    if(!this.#idIsValid(accountId)){
-      throw new InvalidPurchaseException('Invalid account ID');
+    try{
+     this.#validate(accountId, ...ticketTypeRequests)
+    }
+    catch(err){
+     throw new InvalidPurchaseException(err.message);
     }
 
+  }
+
+  #validate(accountId, ...ticketTypeRequests){
+    if(!Array.isArray(ticketTypeRequests) || !(ticketTypeRequests[0] instanceof TicketTypeRequest)){
+      throw new Error('Invalid ticket request');
+    }
+
+    if(!this.#idIsValid(accountId)){
+      throw new Error('Invalid account ID');
+    }
+    
+    if(!this.#requestQuantityIsValid(ticketTypeRequests)){
+      throw new Error('Invalid Ticket Request Quantities');
+    }
+
+    if(!this.#requestAdultChildTicketRatioIsValid(ticketTypeRequests)){
+      throw new Error('Child tickets must be purchased with at least one adult ticket');
+    }
+
+    if(!this.#requestAdultInfantTicketRatioIsValid(ticketTypeRequests)){
+      throw new Error('An Adult ticket must be purchased with each infant ticket');
+    }
   }
 
   #idIsValid(accountId){
     return typeof accountId === "number" && accountId > 0
   }
+
+  #requestQuantityIsValid(ticketTypeRequests){        
+    let ticketQuantity = ticketTypeRequests.reduce((sum, request)=>{
+      return sum + request.getNoOfTickets()
+    }, 0);
+
+    if(ticketQuantity < 1 || ticketQuantity > 25){
+      return false
+    }
+
+    return true
+  }
+
+  #requestAdultChildTicketRatioIsValid(ticketTypeRequests){
+    let adultTicketQuantity = this.#getTicketCount('ADULT', ticketTypeRequests);
+    let childTicketQuantity = this.#getTicketCount('CHILD', ticketTypeRequests);
+
+    return childTicketQuantity  ? adultTicketQuantity : true
+  }
+
+  #requestAdultInfantTicketRatioIsValid(ticketTypeRequests){
+    let adultTicketQuantity = this.#getTicketCount('ADULT', ticketTypeRequests);    
+    let infantTicketQuantity = this.#getTicketCount('INFANT', ticketTypeRequests);
+
+    return adultTicketQuantity >= infantTicketQuantity;
+  }
+
+  #getTicketCount(ticketType, ticketTypeRequests){
+    return ticketTypeRequests.reduce((sum, request)=>{
+      return request.getTicketType() === ticketType ?  sum + request.getNoOfTickets() : sum
+    }, 0);
+  }
+
 }
