@@ -1,9 +1,8 @@
 import TicketTypeRequest from './lib/TicketTypeRequest.js';
 import InvalidPurchaseException from './lib/InvalidPurchaseException.js';
-import TicketPaymentService from '../thirdparty/paymentgateway/TicketPaymentService.js';
-import SeatReservationService from '../thirdparty/seatbooking/SeatReservationService.js';
 
 export default class TicketService {
+
   #ticketPaymentService;
   #seatReservationService;
   #ticketPrices;
@@ -23,7 +22,7 @@ export default class TicketService {
     }
 
     this.#processPayment(accountId, ticketTypeRequests);
-
+    this.#reserveSeats(accountId, ticketTypeRequests);
   }
 
   #validate(accountId, ...ticketTypeRequests){
@@ -78,26 +77,25 @@ export default class TicketService {
     return adultTicketQuantity >= infantTicketQuantity;
   }
 
-  #getTicketCount(ticketType, ticketTypeRequests){
-    return ticketTypeRequests.reduce((sum, request)=>{
-      return request.getTicketType() === ticketType ?  sum + request.getNoOfTickets() : sum
-    }, 0);
-  }
-
   #processPayment(accountId, ticketTypeRequests) {
     amountToPay = this.#calculatePayment(ticketTypeRequests);
     this.#ticketPaymentService.makePayment(accountId, amountToPay);
   }
 
+  #reserveSeats(accountId, ticketTypeRequests) {
+    seatsToReserve = this.#getTicketCount('ADULT', ticketTypeRequests) + this.#getTicketCount('CHILD', ticketTypeRequests);;
+    this.#seatReservationService.reserveSeat(accountId, seatsToReserve);
+  }
+
   #calculatePayment(ticketTypeRequests) {
-    return ticketTypeRequests.reduce((total, request) => {
-      if(request.getTicketType() === 'ADULT') {
-        return total + (request.getNoOfTickets() * this.#ticketPrices.adult); 
-      }
-      if(request.getTicketType() === 'CHILD') {
-        return total + (request.getNoOfTickets() * this.#ticketPrices.child); 
-      }
-      return total;
+    let adultTotal = this.#getTicketCount('ADULT', ticketTypeRequests) * this.#ticketPrices.adult;
+    let childTotal = this.#getTicketCount('CHILD', ticketTypeRequests) * this.#ticketPrices.child;
+    return adultTotal + childTotal;
+  }
+
+  #getTicketCount(ticketType, ticketTypeRequests){
+    return ticketTypeRequests.reduce((sum, request)=>{
+      return request.getTicketType() === ticketType ?  sum + request.getNoOfTickets() : sum
     }, 0);
   }
 

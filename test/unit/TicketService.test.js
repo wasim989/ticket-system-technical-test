@@ -97,7 +97,7 @@ describe('seat reservation tests', () => {
     ticketService.purchaseTickets(123, ...TicketServiceData.maxAdultOneChild);
     expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 25);
     ticketService.purchaseTickets(123, ...TicketServiceData.oneAdultMaxChild);
-    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 1);
+    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 25);
     ticketService.purchaseTickets(123, ...TicketServiceData.twelveAdultThirteenChild);
     expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 25);
   });  
@@ -106,11 +106,9 @@ describe('seat reservation tests', () => {
     ticketService.purchaseTickets(123, ...TicketServiceData.oneAdultOneInfant);
     expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 1);
     ticketService.purchaseTickets(123, ...TicketServiceData.maxAdultOneInfant);
-    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 1);
+    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 24);
     ticketService.purchaseTickets(123, ...TicketServiceData.thirteenAdultTwelveInfants);
-    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 1);
-    ticketService.purchaseTickets(123, ...TicketServiceData.twelveAdultTwelveInfants);
-    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 1);
+    expect(reserveSeatsSpy).toHaveBeenLastCalledWith(123, 13);
   }); 
 
 });
